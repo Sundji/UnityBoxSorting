@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Worker : MonoBehaviour
 {
+    private static readonly string _ANIMATOR_WALKING_PARAMETER_NAME = "IsWalking";
     private static readonly string _TAG_BOX = "Box";
     private static readonly string _TAG_CONTAINER = "Container";
     private static readonly string _TAG_WALL = "Wall";
@@ -10,6 +11,7 @@ public class Worker : MonoBehaviour
     [SerializeField] private Vector2 _boxPositionWhileCarrying = Vector2.zero;
     [SerializeField] private float _walkingSpeed = 1.0f;
 
+    private Animator _animator = null;
     private SpriteRenderer _spriteRenderer = null;
     private Rigidbody2D _rigidbody = null;
 
@@ -20,9 +22,10 @@ public class Worker : MonoBehaviour
 
     private void Awake()
     {
+        _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _rigidbody = GetComponent<Rigidbody2D>();
-        _rigidbody.velocity = _walkingDirection * _walkingSpeed;
+        StartWalking();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -74,9 +77,22 @@ public class Worker : MonoBehaviour
 
     private void ChangeWalkingDirection()
     {
-        _rigidbody.velocity = Vector2.zero;
+        StopWalking();
+
         _walkingDirection = _walkingDirection == Vector2.right ? Vector2.left : Vector2.right;
         _spriteRenderer.flipX = !_spriteRenderer.flipX;
+        StartWalking();
+    }
+
+    private void StartWalking()
+    {
+        _animator.SetBool(_ANIMATOR_WALKING_PARAMETER_NAME, true);
         _rigidbody.velocity = _walkingDirection * _walkingSpeed;
+    }
+
+    private void StopWalking()
+    {
+        _animator.SetBool(_ANIMATOR_WALKING_PARAMETER_NAME, false);
+        _rigidbody.velocity = Vector2.zero;
     }
 }

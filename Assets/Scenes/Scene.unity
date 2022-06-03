@@ -999,7 +999,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boxPositionWhileCarrying: {x: 0, y: 0.75}
-  _walkingSpeed: 3.5
+  _walkingSpeed: 5
 --- !u!1 &1935650640
 GameObject:
   m_ObjectHideFlags: 0

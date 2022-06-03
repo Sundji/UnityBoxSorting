@@ -1,9 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Worker : MonoBehaviour
 {
-    private const float _HOLD_DELAY = 0.5f;
     private static readonly string _TAG_BOX = "Box";
     private static readonly string _TAG_CONTAINER = "Container";
     private static readonly string _TAG_WALL = "Wall";
@@ -14,12 +14,9 @@ public class Worker : MonoBehaviour
     private SpriteRenderer _spriteRenderer = null;
     private Rigidbody2D _rigidbody = null;
 
-    private bool _isContainerGreenFound = false;
-    private Vector2 _containerGreenPosition = Vector2.zero;
-    private bool _isContainerRedFound = false;
-    private Vector2 _containerRedPosition = Vector2.zero;
     private bool _isCarrying = false;
     private Box _carriedBox = null;
+    private Dictionary<BoxColor, Vector2> _containerPositions = new Dictionary<BoxColor, Vector2>();
     private Vector2 _walkingDirection = Vector2.right;
 
     private void Awake()
@@ -61,14 +58,9 @@ public class Worker : MonoBehaviour
             _isCarrying = true;
             _carriedBox = box;
 
-            if (box.BoxColor == BoxColor.GREEN && _isContainerGreenFound)
+            if (_containerPositions.TryGetValue(box.BoxColor, out Vector2 containerPosition))
             {
-                Vector2 containerDirection = transform.position.x > _containerGreenPosition.x ? Vector2.left : Vector2.right;
-                if (_walkingDirection != containerDirection) ChangeWalkingDirection();
-            }
-            else if (box.BoxColor == BoxColor.RED && _isContainerRedFound)
-            {
-                Vector2 containerDirection = transform.position.x > _containerRedPosition.x ? Vector2.left : Vector2.right;
+                Vector2 containerDirection = transform.position.x > containerPosition.x ? Vector2.left : Vector2.right;
                 if (_walkingDirection != containerDirection) ChangeWalkingDirection();
             }
         }
@@ -76,17 +68,7 @@ public class Worker : MonoBehaviour
         if (collision.transform.CompareTag(_TAG_CONTAINER))
         {
             Container container = collision.transform.GetComponent<Container>();
-
-            if (container.ContainerColor == BoxColor.GREEN && !_isContainerGreenFound)
-            {
-                _isContainerGreenFound = true;
-                _containerGreenPosition = container.transform.position;
-            }
-            else if (container.ContainerColor == BoxColor.RED && !_isContainerRedFound)
-            {
-                _isContainerRedFound = true;
-                _containerRedPosition = container.transform.position;
-            }
+            if (!_containerPositions.TryGetValue(container.ContainerColor, out Vector2 containerPosition)) _containerPositions.Add(container.ContainerColor, container.transform.position);
         }
     }
 

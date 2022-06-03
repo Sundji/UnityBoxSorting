@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
 public class Box : MonoBehaviour
 {
+    public static Action<Box> OnBoxDroppedAction = null;
+
     [SerializeField] private BoxColor _boxColor = BoxColor.GREEN;
     [SerializeField] private bool _initializeInAwake = false;
     [Header("Box Sprites")]
@@ -33,7 +36,8 @@ public class Box : MonoBehaviour
     {
         transform.parent = _parent;
         transform.localPosition = Vector2.zero;
-        Destroy(gameObject);
+        OnBoxDroppedAction?.Invoke(this);
+        gameObject.SetActive(false);
     }
 
     public void InitializeBox(BoxColor boxColor)

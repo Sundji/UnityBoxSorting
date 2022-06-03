@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,22 +30,6 @@ public class Worker : MonoBehaviour
         if (collision.transform.CompareTag(_TAG_WALL)) ChangeWalkingDirection();
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (!_isCarrying) return;
-
-        if (collision.transform.CompareTag(_TAG_CONTAINER))
-        {
-            Container container = collision.transform.GetComponent<Container>();
-            if (_carriedBox.BoxColor == container.ContainerColor)
-            {
-                _isCarrying = false;
-                _carriedBox.DropBox();
-                _carriedBox = null;
-            }
-        }
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.CompareTag(_TAG_BOX))
@@ -69,6 +52,23 @@ public class Worker : MonoBehaviour
         {
             Container container = collision.transform.GetComponent<Container>();
             if (!_containerPositions.TryGetValue(container.ContainerColor, out Vector2 containerPosition)) _containerPositions.Add(container.ContainerColor, container.transform.position);
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (!_isCarrying) return;
+
+        if (collision.transform.CompareTag(_TAG_CONTAINER))
+        {
+            Container container = collision.transform.GetComponent<Container>();
+            if (_carriedBox.BoxColor == container.ContainerColor)
+            {
+                _isCarrying = false;
+                _carriedBox.DropBox();
+                _carriedBox = null;
+                container.AddBox();
+            }
         }
     }
 

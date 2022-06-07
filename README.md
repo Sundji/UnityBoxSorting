@@ -11,3 +11,4 @@
 - used boxes return to an object pool to be reused again
 - prefabs are generic in a way that it is not needed to create a prefab for each color, the appearance is set through code with the color value given in an initialization function
 - made for the resolution 1920x1080
+- made with Unity 2021.3.3f1
